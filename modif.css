@@ -1,0 +1,57 @@
+#hr_first_form{
+    position: relative;
+    top: -30px;
+}
+.modif{
+    position: relative;
+    top: 10px;
+}
+
+#modif2{
+    position: relative;
+    top: 20px;
+}
+#modif3{
+    position: relative;
+    top: 30px;
+}
+#modif4{
+    position: relative;
+    top: 40px;
+}
+#modif5{
+    position: relative;
+    top: 50px;
+}
+#modif6{
+    position: relative;
+    top: 60px;
+}
+
+#hr_second_form{
+    position: relative;
+    top: -10px;
+}
+
+#sales_first_form{
+    position:  relative;
+    top: -30px;
+}
+#sales_second_form{
+    position:  relative;
+    top: -30px;
+}
+#sales_credit{
+    position: relative;
+    top: 17px;
+}
+
+#customer_first_form{
+    position:  relative;
+    top: -30px;
+}
+#customer_second_form{
+    position:  relative;
+    top: -30px;
+}
+
