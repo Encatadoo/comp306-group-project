@@ -46,3 +46,19 @@ if (isset($_POST['show_transactions'])){
     }
     $result = show_transactions($conn,$aid,$mnth);
 }
+
+if (isset($_POST['give_loan'])){
+	$cid = $_POST["inputcid"];
+	$eid = $_POST["inputeid"];
+	$amount = $_POST["inputamount"];
+    if(check_cid($cid) !== true){
+        exit("Wrong cid value");
+    }
+	if(check_cid($eid) !== true){
+        exit("Wrong eid value");
+    }
+	if(check_cid($amount) !== true){
+        exit("Wrong amount value");
+    }
+    $result = give_loan($conn,$cid,$eid,$amount);
+}

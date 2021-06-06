@@ -12,8 +12,6 @@
 <div id = "sales_first_form">
     <form action='result.php' method='post'>
         <label>C_ID:         </label><input type='number' name='inputcid' /><br/>
-        <label>E_ID:         </label><input type='number' name='sales_emp_id' /><br/>
-
         <input class= "modif", name="show_customer", value='Get customer informations' type='submit'/>
         <input class= "modif", name="show_customer_accounts", value='Get account infomration of the customer' type='submit'/></br>
         <input id= "sales_credit", name="show_customer_suggestedcredit", value='Find the suggested credit amount and interest rate' type='submit'/></p>
@@ -32,8 +30,10 @@
 
     <!-- Manipulation operation -->
     <form id = "sales_third_form", action='result.php' method='post'>
-    <label>Amount:  </label><input type='number' name='loan_amount' />
-    <input style = "position: relative; left: 10px", name="loan", value='Give Loan' type='submit'/></p>
+	<label>C_ID:         </label><input type='number' name='inputcid' /><br/>
+    <label>E_ID:         </label><input type='number' name='inputeid' /><br/>
+    <label>Amount:  </label><input type='number' name='inputamount' />
+    <input style = "position: relative; left: 10px", name="give_loan", value='Give Loan' type='submit'/></p>
     </form>
     <hr>
 
