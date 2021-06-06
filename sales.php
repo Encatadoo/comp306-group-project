@@ -11,22 +11,22 @@
 
 <div id = "sales_first_form">
     <form action='result.php' method='post'>
-        <label>C_ID:         </label><input type='number' name='cust_id' /><br/>
+        <label>C_ID:         </label><input type='number' name='inputcid' /><br/>
         <label>E_ID:         </label><input type='number' name='sales_emp_id' /><br/>
 
-        <input class= "modif", name="cust_info", value='Get customer informations' type='submit'/>
-        <input class= "modif", name="account_info", value='Get account infomration of the customer' type='submit'/></br>
-        <input id= "sales_credit", name="credit_amount", value='Find the suggested credit amount and interest rate' type='submit'/></p>
-        <input class= "modif", name="credit_amount_2", value='Get the amount of credit that will be given' type='submit'/></p>
+        <input class= "modif", name="show_customer", value='Get customer informations' type='submit'/>
+        <input class= "modif", name="show_customer_accounts", value='Get account infomration of the customer' type='submit'/></br>
+        <input id= "sales_credit", name="show_customer_suggestedcredit", value='Find the suggested credit amount and interest rate' type='submit'/></p>
+        <input class= "modif", name="show_customer_credit", value='Get the amount of credit that will be given' type='submit'/></p>
     </form>
     <hr>
 </div>
     <h2 style = "font-size: 30px; position: relative; top: -30px">Transcation</h2>
     <!--Remove operation -->
     <form id = "sales_second_form", action='result.php' method='post'>
-        <label>A_ID:  </label><input type='number' name='account_id' />
-        <label>Month:  </label><input type='text' name='month' /></br>
-        <input class="modif" name="trans", value='Show the all transaction made in that month' type='submit'/></p>
+        <label>A_ID:  </label><input type='number' name='inputaid' />
+        <label>Month(1-12):  </label><input type='text' name='inputmonth' /></br>
+        <input class="modif" name="show_transactions", value='Show the all transaction made in that month' type='submit'/></p>
     </form>
     <hr>
 

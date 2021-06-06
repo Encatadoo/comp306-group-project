@@ -8,10 +8,10 @@ More information about the parameters can be found:
 https://www.php.net/manual/en/mysqli.construct.php
 */
 
-$host     = 'localhost:3306';
+$host     = 'localhost';
 $username = 'root';
 $passwd   = 'Ba17252134364.'; #This operation is not secure
-$dbName   = 'world';
+$dbName   = 'project';
 
 $conn = mysqli_connect($host, $username, $passwd, $dbName);
 

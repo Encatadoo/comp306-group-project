@@ -24,8 +24,6 @@ customers who made transactions through dollar' type='submit'/></p>
     </form>
 </div>
 
-    <!--Remove operation -->
-
 
 </body>
 </html>
