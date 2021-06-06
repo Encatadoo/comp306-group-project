@@ -134,3 +134,151 @@ function give_loan($conn,$cid,$eid,$amount){
 		echo "Can't give that much loan.";
 	}
 }
+
+
+// Functions for the analyst part
+
+
+
+// 1
+//'Get the informations of customers who have made transactions more than 5 in a day.'
+//1 gün içerisinde x ten fazla transaction yapan müşterileri getir:
+
+function shw_high_freq_customers($conn){
+    $sql = "SELECT T_Date, C_ID , C_NAME
+	FROM Transactions T, Customers C, Accounts A
+	WHERE T.Sending_ID = A.A_ID AND C.C_ID = A.C_ID 
+	GROUP BY T_Date
+	HAVING COUNT(*) > 5"; // 5 can be replaced by X
+
+	$result = $conn->query($sql);
+
+	if (mysqli_num_rows($result)!==0){
+		echo "High frequency traders";
+		echo "<br>
+		<table border='1'><tr><th>Date</th>	<th>ID</th> <th>Name</th>	</tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["T_Date"]. "</td><td>". $row["C_ID"]."</td><td>". $row["C_NAME"]. "</td></tr>";
+
+		echo "</table>";
+	}
+}
+
+
+// 2. 'For each employee get the number of customers that have been contacted and average loan amount that has been given to this customers'
+//Her bir loan veren employee için kaç müşteriyle iletişim kurduğunu ve average loan amountunu getir. VALİDASYON TAMAM
+
+function shw_loaning_metrics($conn){
+    $sql = "SELECT emp_id, COUNT(DISTINCT C_ID) AS Customers, AVG(loan_amount) AS AvgLoan
+	FROM loan
+	GROUP BY emp_id;";
+	$result = $conn->query($sql);
+
+	if (mysqli_num_rows($result)!==0){
+		echo "Loaning Performance";
+		echo "<br>
+		<table border='1'><tr><th>ID</th>	<th>#Loan given</th> <th>AVG Loan Given</th>	</tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["emp_id"]. "</td><td>". $row["Customers"]."</td><td>". $row["loan_amount"]. "</td></tr>";
+
+		echo "</table>";
+	}
+}
+
+
+
+// 3.Show the customer names that holds asset X more than 20'
+//Asset X elinde bulunduran ve y Amount’dan yüksek olan müşterilerin isimlerini göster.  VALİDASYON TAMAM
+
+
+
+function shw_asset_metrics($conn){
+    $sql = "SELECT C_name, A_code, amount 
+	FROM customer, accountassets, accounts, assets
+	WHERE amount > 50 and accountassets.A_ID = accounts.A_ID and accounts.C_ID=customer.C_ID and assets.asset_id = accountassets.asset_id
+    ORDER BY amount desc"; // Asset_ID="inputassetid" and amount>A can be parametrized
+	$result = $conn->query($sql);
+
+	if (mysqli_num_rows($result)!==0){
+		echo "More than 50 unit asset holders";
+		echo "<br>
+		<table border='1'><tr><th>Customer Name</th><th>Asset Code</th><th>Amount</th></tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["C_name"]. "</td><td>". $row["A_code"]. "</td><td>".$row["amount"]. "</td></tr>";
+		}
+		echo "</table>";
+	}
+}
+
+
+// 4.Show the first ten customers that have credit score more than X
+//Kredi skoru K dan yüksek olan müşterilerden loan u en yüksek 10 adet kişiyi getir 
+// K yerine 730 yazdım değiştirilebilir.
+
+
+
+
+function shw_top_customers($conn){
+    $sql = "Select c.C_name as CustomerName, c.credit_score
+	from customer as c, insitutional_c as i 
+	where c.credit_score > 730 AND c.C_ID = i.cust_id
+	Order by c.credit_score desc
+	Limit 10";
+	$result = $conn->query($sql);
+
+	if (mysqli_num_rows($result)!==0){
+		echo "Top 10 Institutional Customer";
+		echo "<br>
+		<table border='1'><tr><th>Company Name</th><th>Credit Score</th></tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["CustomerName"]. "</td><td>". $row["credit_score"]. "</td></tr>";
+		}
+		echo "</table>";
+	}
+}
+
+// 5. Show the amounts of "Buy" orders in the last 15 days
+//Total volume of dollar type regular transactions in last 5 years days
+
+
+
+function shw_trans_volume($conn){
+    
+	$sql = "SELECT r_type,SUM(amount)/1000000 as total_volume from R_TRANSACTION as R, transactions as T WHERE
+	T.transaction_id = R.transaction_id and  Currency = 'USD'  and t_date BETWEEN DATE_SUB(NOW(), INTERVAL 5*365 DAY) AND NOW() group by r_type;";
+	
+	$result = $conn->query($sql);
+
+	if (mysqli_num_rows($result)!==0){
+		echo "Total volume of dollar transactions in last 5 years in millions";
+		echo "<br>
+		<table border='1'><tr><th>Type of Transaction</th><th>Amount(millions)</th></tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["r_type"]. "</td><td>". $row["total_volume"]. "</td></tr>";
+		}
+		echo "</table>";
+	}
+}
+
+
+// 6. Show the id and names of the employees that has given loan to the customers who made transactions through dollar
+//Name and ID of employees who gave loan for customers who made USD type transfer
+
+
+function shw_usd_cust_loan_metrics($conn){
+    $sql = "SELECT DISTINCT E.emp_id, salary, E.perfscore from Employee as E, Customer as C, Accounts as A,Loan, Checking_Account as CH, Transactions as T, R_transaction as R where Loan.c_id = C.c_id and E.emp_id = Loan.emp_id and
+	C.c_id = A.c_id and A.a_id = CH.a_id and CH.a_id = T.sending_id and T.transaction_id = R.transaction_id and r_type = 'Transfer' and R.currency = 'USD'";
+
+	$result = $conn->query($sql);
+
+
+	if (mysqli_num_rows($result)!==0){
+		echo "Information about employees who gave loan for customers who made USD type transfer";
+		echo "<br>
+		<table border='1'><tr><th>ID</th>	<th>Salary</th> <th>Performance score</th>	</tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["emp_id"]. "</td><td>". $row["salary"]."</td><td>". $row["perfscore"]. "</td></tr>";
+		}
+		echo "</table>";
+	}
+}
