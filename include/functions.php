@@ -85,7 +85,7 @@ function show_customer_suggestedcredit($conn,$cid){
 }
 
 function show_customer_credit($conn,$cid){
-    $sql = "SELECT c_name, c_id, 6*credit_score+6*years_of_credit_hist+0.75*income as \"kredi\" FROM customer WHERE c_id='$cid'";
+    $sql = "SELECT c_name, c_id, 11*credit_score+11*years_of_credit_hist+1.5*income as \"kredi\" FROM customer WHERE c_id='$cid'";
 	$result = $conn->query($sql);
 	echo "<br>
     <table border='1'><tr><th>C_name</th><th>C_ID</th><th>kredi</th></tr>";
@@ -96,26 +96,41 @@ function show_customer_credit($conn,$cid){
 }
 
 function show_transactions($conn,$aid,$mnth){
-    $sql = "SELECT * FROM accounts, Transactions NATURAL JOIN R_transaction WHERE accounts.A_ID='$aid' and (accounts.A_ID=transactions.Reciving_ID or accounts.A_ID=transactions.Sending_ID) and Month(Transactions.T_Date)='$mnth'";
-    $result = $conn->query($sql);
-    if (mysqli_num_rows($result)!==0){
-    echo "Regular Transactions";
-    echo "<br>
-    <table border='1'><tr><th>A_ID</th><th>C_ID</th><th>Transaction_ID</th><th>T_Date</th><th>Reciving_ID</th><th>Sending_ID</th><th>Explanation</th><th>R_Type</th>><th>Amount</th><th>Currency</th></tr>";
-    while($row = $result->fetch_assoc()) {
-    echo "<tr><td>". $row["A_ID"]. "</td><td>". $row["C_ID"]. "</td><td>". $row["Transaction_ID"]. "</td><td>". $row["T_Date"]. "</td><td>" . $row["Reciving_ID"]. "</td><td>" . $row["Sending_ID"]."</td><td>" . $row["Explanation"]."</td><td>" . $row["T_Type"]."</td><td>" . $row["Asset_ID"]."</td><td>" . $row["Count"]."</td></tr>";
+	$sql = "SELECT * FROM accounts, Transactions NATURAL JOIN R_transaction WHERE accounts.A_ID='$aid' and (accounts.A_ID=transactions.Reciving_ID or accounts.A_ID=transactions.Sending_ID) and Month(Transactions.T_Date)='$mnth'";
+	$result = $conn->query($sql);
+	if (mysqli_num_rows($result)!==0){
+		echo "Regular Transactions";
+		echo "<br>
+		<table border='1'><tr><th>A_ID</th><th>C_ID</th><th>Transaction_ID</th><th>T_Date</th><th>Reciving_ID</th><th>Sending_ID</th><th>Explanation</th><th>R_Type</th>><th>Amount</th><th>Currency</th></tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["A_ID"]. "</td><td>". $row["C_ID"]. "</td><td>". $row["Transaction_ID"]. "</td><td>". $row["T_Date"]. "</td><td>" . $row["Reciving_ID"]. "</td><td>" . $row["Sending_ID"]."</td><td>" . $row["Explanation"]."</td><td>" . $row["T_Type"]."</td><td>" . $row["Asset_ID"]."</td><td>" . $row["Count"]."</td></tr>";
+		}
+		echo "</table>";
+	}
+    $sql = "SELECT * FROM accounts, Transactions NATURAL JOIN T_transaction WHERE accounts.A_ID='$aid' and (accounts.A_ID=transactions.Reciving_ID or accounts.A_ID=transactions.Sending_ID) and Month(Transactions.T_Date)='$mnth'";
+	$result = $conn->query($sql);
+	if (mysqli_num_rows($result)!==0){
+		echo "Tradable Transactions";
+		echo "<br>
+		<table border='1'><tr><th>A_ID</th><th>C_ID</th><th>Transaction_ID</th><th>T_Date</th><th>Reciving_ID</th><th>Sending_ID</th><th>Explanation</th><th>Asset_ID</th>><th>Count</th></tr>";
+		while($row = $result->fetch_assoc()) {
+			echo "<tr><td>". $row["A_ID"]. "</td><td>". $row["C_ID"]. "</td><td>". $row["Transaction_ID"]. "</td><td>". $row["T_Date"]. "</td><td>" . $row["Reciving_ID"]. "</td><td>" . $row["Sending_ID"]."</td><td>" . $row["Explanation"]."</td><td>" . $row["Asset_ID"]."</td><td>" . $row["Count"]."</td></tr>";
+		}
+		echo "</table>";
+	}
+}
+
+function give_loan($conn,$cid,$eid,$amount){
+    $sql = "SELECT 11*credit_score+11*years_of_credit_hist+1.5*income FROM customer WHERE c_id='$cid'";
+	$result = $conn->query($sql);
+	$result->data_seek(0);
+	$row = $result->fetch_row();
+	$maxloan = $row[0];
+	if($maxloan > $amount){
+		$sql = "INSERT INTO Loan(emp_id, c_id, loan_amount) VALUES('$eid','$cid','$amount')";
+		$result = $conn->query($sql);
     }
-    echo "</table>";
-    }
-        $sql = "SELECT * FROM accounts, Transactions NATURAL JOIN T_transaction WHERE accounts.A_ID='$aid' and (accounts.A_ID=transactions.Reciving_ID or accounts.A_ID=transactions.Sending_ID) and Month(Transactions.T_Date)='$mnth'";
-    $result = $conn->query($sql);
-    if (mysqli_num_rows($result)!==0){
-    echo "Tradable Transactions";
-    echo "<br>
-    <table border='1'><tr><th>A_ID</th><th>C_ID</th><th>Transaction_ID</th><th>T_Date</th><th>Reciving_ID</th><th>Sending_ID</th><th>Explanation</th><th>Asset_ID</th>><th>Count</th></tr>";
-    while($row = $result->fetch_assoc()) {
-    echo "<tr><td>". $row["A_ID"]. "</td><td>". $row["C_ID"]. "</td><td>". $row["Transaction_ID"]. "</td><td>". $row["T_Date"]. "</td><td>" . $row["Reciving_ID"]. "</td><td>" . $row["Sending_ID"]."</td><td>" . $row["Explanation"]."</td><td>" . $row["Asset_ID"]."</td><td>" . $row["Count"]."</td></tr>";
-    }
-    echo "</table>";
-    }
-    }
+	else {
+		echo "Can't give that much loan.";
+	}
+}
